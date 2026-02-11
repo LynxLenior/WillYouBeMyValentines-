@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Chewy&display=swap" rel="stylesheet">
+    </head>
+    <style>
+        body {
+            margin: 0; 
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background-image: url(Main.jpg); 
+            background-size: cover;      
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .image-button {
+            position: absolute;
+            top: 5%;
+            left: 97%;
+            -ms-transform: translate( - 50%, -50%);
+            transform: translate(-50%, -50%);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            width: 40px; /* Adjust as needed */
+            height: 40px; /* Adjust as needed */
+            display: block;
+        }
+        .image-button img {
+            /* Make the image fill the entire button area */
+            width: 100%;
+            height: 100%;
+            display: block; /* Prevents extra white space issues */
+            object-fit: cover; /* Ensures image covers the area without stretching awkwardly */
+        }
+        .exit {
+            position: absolute;
+            top: 12%;
+            left: 97%;
+            -ms-transform: translate( - 50%, -50%);
+            transform: translate(-50%, -50%);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            width: 60px; /* Adjust as needed */
+            height: 50px; /* Adjust as needed */
+            display: block;
+        }
+        .exit img {
+            /* Make the image fill the entire button area */
+            width: 100%;
+            height: 100%;
+            display: block; /* Prevents extra white space issues */
+            object-fit: cover; /* Ensures image covers the area without stretching awkwardly */
+        }
+        #myVideo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            z-index: -1; /* Keep it behind buttons but above the body BG */
+            opacity: 0;  /* HIDDEN BY DEFAULT */
+            transition: opacity 0.5s ease; /* Smooth fade between image and video */
+        }
+        #Dog {
+            position: absolute;
+            top: 50%;        /* Push top edge to the middle */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 46%;
+            min-height: 20%;
+            background-position: center;
+            z-index: -1; /* Keep it behind buttons but above the body BG */
+            opacity: 0;  /* HIDDEN BY DEFAULT */
+            transition: opacity 0.5s ease; /* Smooth fade between image and video */
+        }
+        #Yesh {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Shifts the element back by half its own width/height */
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .Yes {
+            top: 50%;
+            left: 56%;
+            position:  absolute;
+            font-family: "Chewy", system-ui;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 7%;
+            -ms-transform: translate( - 50%, -50%);
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }   
+        .No {
+            left: 50%;
+            top: 50%;
+            position: absolute;
+            font-family: "Chewy", system-ui;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 50%;
+            -ms-transform: translate( - 50%, -50%);
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+        .noBox {
+            left: 40%;
+            top: 50%;
+            background-color: transparent;
+            position: absolute;
+            cursor: pointer;
+            width: 13%;
+            height: 15%;
+            -ms-transform: translate( - 50%, -50%);
+            transform: translate(-50%, -50%);
+            z-index: 0;
+        }
+    
+    </style>
+    <body>
+    <!-- Audio -->
+        <audio id="Pine" loop>
+            <source src="Pine.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="Yip" loop>
+            <source src="Yip.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="only" loop>
+            <source src="Only.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="clap">
+            <source src="Clap.mp3" type="audio/mpeg">
+        </audio>
+
+    <!-- Videos -->
+        <video muted loop id="myVideo">
+            <source src="Sad.mp4" type="video/mp4">
+        </video>
+        <video muted loop id="Dog">
+            <source src="Doggy.mp4" type="video/mp4">
+        </video>
+        <video muted loop id="Yesh">
+            <source src="Yes.mp4" type="video/mp4">
+        </video>
+        <div class="noBox" onmouseenter="dodge()">
+            <h1 class="Tired"style="color: rgb(223, 222, 222); font-family: 'Chewy', system-ui; text-align: center; color: transparent"> I'm Tired... </h1>
+            <button class="No" onclick="SizeChange()" onmouseenter="playVid()" onmouseleave="pauseVid()"> NO </button>
+        </div>
+        <button class="Yes" onclick="yesClicked()" onmouseenter="playDog()" onmouseleave="pauseDog()"> YES </button>
+        <button class="image-button" onclick="openFullscreen();">
+        <img src="zoom-in.png" alt="Fullscreen" width="50" height="50">
+        </button>
+        <button class="exit" onclick="closeFullscreen();">
+            <img src="zoom-out.png" alt="Fullscreen" width="50" height="50">
+        </button>
+    <script>
+        const elem = document.documentElement;
+        const audio = document.getElementById("Pine");
+        audio.volume = 0.1;
+        const Yip = document.getElementById("Yip");
+        Yip.volume = 0.2;
+        const Clap = document.getElementById("clap");
+        Clap.volume = 0.2;
+        const Only = document.getElementById("only");
+        Only.volume = 0.2;
+
+        const video = document.getElementById("myVideo");
+        const Dog = document.getElementById("Dog");
+        const Yesh = document.getElementById("Yesh");
+        function yesClicked() {
+            Yesh.style.opacity = "1";
+            Yesh.style.zIndex = "100";
+            Yesh.play();
+            Clap.play();
+            Only.play();
+
+        }
+        function playDog() {
+            Dog.style.opacity = "1"; // Show the video
+            Dog.play();              // Start the video
+            Yip.play();              // Start the audio
+        }
+        function pauseDog() {
+            Dog.style.opacity = "0"; // Hide the video (showing MainBG.jpg again)
+            Dog.pause();             // Pause to save computer power
+            Dog.currentTime = 0; 
+            Yip.pause();             // Pause the Yip audio
+            Yip.currentTime = 0;       // Reset Yip audio to start
+        }
+        function playVid() {
+            video.style.opacity = "1"; // Show the video
+            video.play();
+            audio.play();              // Start the video
+        }
+
+        function pauseVid() {
+            video.style.opacity = "0"; // Hide the video (showing MainBG.jpg again)
+            video.pause();             // Pause to save computer power
+            video.currentTime = 0;     // Optional: Resets video to the start
+            audio.pause();
+        }
+
+        function openFullscreen() {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            }
+        }
+
+        function closeFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+
+        var i = 10;
+        function SizeChange() {
+            var button = document.getElementsByClassName("Yes")[0];
+            i += 2;
+            button.style.width = i + "%";
+            button.style.fontSize = (i / 5) + "rem";
+        }
+        function moveNoBox() {
+            function dodge() {
+            const box = document.getElementsByClassName("noBox")[0];
+            
+            }
+        }
+        const box = document.getElementsByClassName("noBox")[0];
+
+        // box Var
+        let posX = 100; 
+        let posY = 100;
+        let startTime = null;
+
+        box.onmouseenter = (e) => {
+            if (startTime === null) {
+                startTime = Date.now();
+            }
+
+            const elapsed = Date.now() - startTime;
+
+            if (elapsed >= 5000) { 
+                box.onmouseenter = null;
+                box.style.transition = "all 3s ease-in-out"; 
+                
+                // Move the box
+                box.style.left = "40%";
+                box.style.top = "50%";
+                
+                // Find text and force it to be visible
+                const tiredText = document.getElementsByClassName("Tired")[0];
+                
+                // Reset opacity and set color (using important to override inline style)
+                tiredText.style.opacity = "1"; 
+                tiredText.style.setProperty("color", "white", "important");
+
+                // Wait for the box to finish moving (3s), then fade the text
+                setTimeout(() => {
+                    tiredText.style.transition = "opacity 1s"; 
+                    tiredText.style.opacity = "0";            
+                }, 2000); 
+
+                return; 
+            }
+            // 1. If mouse comes from the left, increase Left (move right)
+            if (e.clientX < posX + 50) { posX += 40; } 
+            else { posX -= 40; } // Move left
+
+            // 2. If mouse comes from the top, increase Top (move down)
+            if (e.clientY < posY + 50) { posY += 40; } 
+            else { posY -= 40; } // Move up
+
+            // 2. THE BORDER LOGIC (Clamping)
+
+            const screenWidth = window.innerWidth - box.offsetWidth;
+            const screenHeight = window.innerHeight - box.offsetHeight;
+
+            // If it hits/passes the right, jump to left
+            if (posX > screenWidth) { posX = 0; }
+            // If it hits/passes the left, jump to right
+            else if (posX < 0) { posX = screenWidth; }
+
+            // If it hits/passes the bottom, jump to top
+            if (posY > screenHeight) { posY = 0; }
+            // If it hits/passes the top, jump to bottom
+            else if (posY < 0) { posY = screenHeight; }
+
+            // 3. Update the box
+            box.style.left = posX + "px";
+            box.style.top = posY + "px";
+        };
+    </script>
+    </body>
+</hmtl>
